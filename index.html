@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base href="https://canneli.github.io/martealma/">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="description" content="Marte Alma — cultura pop, cinema, séries, música e crítica com olhar autoral." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Marte Alma" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="google-adsense-account" content="ca-pub-5717617239498734" />
+  <link rel="canonical" href="https://canneli.github.io/martealma/" />
+  <title>Marte Alma | Cultura & Entretenimento</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            brand: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              pink: '#376b4c',
+              orange: '#996039',
+              cyan: '#35655e',
+              violet: '#62624b',
+              ink: '#0a0a0f'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f0e9;
+      --surface: rgba(255,253,249,.92);
+      --surface-strong: rgba(255,253,249,.98);
+      --text: #201e1d;
+      --muted: #625e5a;
+      --line: rgba(32,30,29,.13);
+      --shadow: 0 18px 60px rgba(50, 38, 31, .11);
+    }
+
+    .dark {
+      color-scheme: dark;
+      --bg: #171512;
+      --surface: rgba(35,32,28,.94);
+      --surface-strong: rgba(42,38,33,.98);
+      --text: #fbf6ee;
+      --muted: #c4bcb1;
+      --line: rgba(255,246,235,.16);
+      --shadow: 0 18px 70px rgba(0,0,0,.34);
+    }
+
+    * { box-sizing: border-box; }
+    html { scrollbar-gutter: stable; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background .35s ease, color .35s ease;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255,79,163,.11), transparent 34%),
+        radial-gradient(circle at 92% 18%, rgba(255,122,26,.10), transparent 34%),
+        radial-gradient(circle at 50% 80%, rgba(36,198,220,.07), transparent 34%);
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      opacity: .025;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitchTiles'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+    }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      box-shadow: var(--shadow);
+    }
+
+    .glass-strong {
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(30px) saturate(160%);
+      -webkit-backdrop-filter: blur(30px) saturate(160%);
+      box-shadow: var(--shadow);
+    }
+
+    .headline-gradient {
+      background: linear-gradient(96deg,#ff4fa3 0%,#ff7a1a 43%,#8b5cf6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .logo-eye { filter: drop-shadow(0 8px 18px rgba(255,122,26,.18)); }
+    .logo-orbit { transform-origin: 50px 50px; animation: orbit 9s linear infinite; }
+    .logo-blink { transform-origin: 50px 50px; animation: blink 6s ease-in-out infinite; }
+    @keyframes orbit { to { transform: rotate(360deg); } }
+    @keyframes blink { 0%,94%,100% { transform: scaleY(1); } 97% { transform: scaleY(.10); } }
+
+    .category-strip { scrollbar-width: none; }
+    .category-strip::-webkit-scrollbar { display: none; }
+
+    .story-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(5,5,9,.94) 4%, rgba(5,5,9,.52) 46%, rgba(5,5,9,.08) 78%);
+      pointer-events: none;
+    }
+
+    .card-hover { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+    @media (hover:hover) {
+      .card-hover:hover { transform: translateY(-5px); box-shadow: 0 24px 70px rgba(31,25,48,.14); }
+      .dark .card-hover:hover { box-shadow: 0 24px 70px rgba(0,0,0,.55); }
+    }
+
+    .article-body {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.03rem, 1.2vw, 1.14rem);
+      line-height: 1.9;
+      letter-spacing: -.01em;
+    }
+    .article-body p { margin: 0 0 1.55rem; color: color-mix(in srgb, var(--text) 87%, transparent); }
+    .article-body h2, .article-body h3 { font-family: 'Syne', sans-serif; line-height: 1.08; margin: 2.7rem 0 1.1rem; }
+    .article-body h2 { font-size: clamp(1.8rem, 4vw, 2.65rem); }
+    .article-body h3 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
+    .article-body blockquote {
+      margin: 2.3rem 0;
+      padding: 1.4rem 1.6rem;
+      border-left: 4px solid #ff7a1a;
+      background: rgba(255,122,26,.07);
+      border-radius: 0 1.2rem 1.2rem 0;
+      font-family: 'Syne', sans-serif;
+      font-weight: 650;
+      font-size: 1.18em;
+    }
+    .article-body img { width: 100%; border-radius: 1.4rem; margin: 2rem 0; }
+    .article-body a { color: #ff7a1a; text-decoration: underline; text-underline-offset: 3px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(130,130,150,.10), rgba(130,130,150,.22), rgba(130,130,150,.10));
+      background-size: 300% 100%; animation: shimmer 1.4s infinite linear;
+    }
+    @keyframes shimmer { to { background-position: -300% 0; } }
+
+    #reading-progress { transform-origin: left center; }
+
+    @media (max-width: 767px) {
+      .desktop-nav { display: none !important; }
+      .hero-title { font-size: clamp(2rem, 10.5vw, 3.8rem); }
+      .mobile-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+    }
+
+
+    /* ===================== MARTE ALMA / MAXIMALISMO EDITORIAL ===================== */
+    /* Uma fonte só para leitura e rótulos: a antiga geometria esmagava palavras demais. */
+    .font-brand { font-family: 'Outfit', sans-serif; letter-spacing: .035em; }
+    .review-score { font-family: 'Outfit', sans-serif; font-variant-numeric: tabular-nums; letter-spacing: -.07em; }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -4;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 52px 52px;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 84%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.8), transparent 84%);
+    }
+
+    .cosmos-orb {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(90px);
+      opacity: .22;
+      pointer-events: none;
+      z-index: -2;
+      animation: cosmicFloat 18s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    .cosmos-orb.one { width: 46vw; height: 46vw; left: -15vw; top: 5vh; background: #ff4fa3; }
+    .cosmos-orb.two { width: 42vw; height: 42vw; right: -13vw; top: 28vh; background: #ff7a1a; animation-delay: -5s; }
+    .cosmos-orb.three { width: 34vw; height: 34vw; left: 35vw; bottom: -14vw; background: #24c6dc; animation-delay: -9s; }
+    @keyframes cosmicFloat { to { transform: translate3d(5vw,-4vh,0) scale(1.15) rotate(9deg); } }
+
+    .glass, .glass-strong { position: relative; isolation: isolate; overflow: hidden; }
+    .glass::after, .glass-strong::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: -1;
+      background: linear-gradient(125deg, rgba(255,255,255,.26), transparent 22%, transparent 73%, rgba(255,79,163,.12));
+      opacity: .72;
+    }
+
+    .headline-gradient {
+      background-size: 220% 220%;
+      animation: headlineFlow 7s ease-in-out infinite;
+    }
+    @keyframes headlineFlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    .maxi-title {
+      text-shadow: 0 10px 35px rgba(255,79,163,.10);
+      letter-spacing: -.045em;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      text-wrap: balance;
+    }
+
+    /* Syne continua como acento editorial em trechos curtos, nunca como um paredão de texto. */
+    .article-body h2, .article-body h3, .article-body blockquote { font-family: 'Syne', sans-serif; }
+
+    .now-ribbon {
+      position: relative;
+      border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: var(--shadow);
+      padding: .38rem .42rem;
+      overflow: hidden;
+    }
+    .now-ribbon::before {
+      content: "";
+      position: absolute;
+      inset: -120% -10%;
+      background: conic-gradient(from 90deg, transparent, rgba(255,79,163,.16), transparent 28%, rgba(36,198,220,.14), transparent 56%, rgba(255,122,26,.17), transparent 76%);
+      animation: ribbonSpin 13s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes ribbonSpin { to { transform: rotate(360deg); } }
+
+    .hero-shell { position: relative; padding: 0 0 13px 0; }
+    .hero-backplate {
+      position: absolute;
+      inset: 14px -10px -2px 14px;
+      border-radius: 2.8rem;
+      background: linear-gradient(135deg,#ff4fa3 0%,#ff7a1a 34%,#8b5cf6 67%,#24c6dc 100%);
+      box-shadow: 0 28px 80px rgba(255,79,163,.18);
+      transform: rotate(.45deg);
+      opacity: .95;
+      transition: transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .hero-shell:hover .hero-backplate { transform: translate(7px,6px) rotate(1deg); }
+    .hero-feature {
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 35px 100px rgba(12,7,18,.32);
+    }
+    .hero-feature::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.13), inset 0 1px 0 rgba(255,255,255,.3);
+    }
+    .hero-feature .hero-title {
+      text-wrap: balance;
+      text-shadow: 0 12px 45px rgba(0,0,0,.45);
+    }
+    .hero-sigil {
+      position: absolute;
+      z-index: 12;
+      top: 22px;
+      right: 22px;
+      width: 84px;
+      height: 84px;
+      border: 1px solid rgba(255,255,255,.36);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: rgba(10,10,15,.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: sigilRotate 16s linear infinite;
+      box-shadow: 0 10px 35px rgba(0,0,0,.2);
+    }
+    .hero-sigil::after { content:"✦"; font-size: 1.6rem; animation: sigilRotate 16s linear infinite reverse; }
+    @keyframes sigilRotate { to { transform: rotate(360deg); } }
+
+    .hero-index {
+      position: absolute;
+      z-index: 12;
+      left: 22px;
+      top: 22px;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: .68rem;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(9,9,15,.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: .7rem .85rem;
+      border-radius: 999px;
+    }
+
+    .radar-card {
+      border-radius: 2.1rem;
+      background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(145deg, rgba(255,79,163,.62), rgba(255,122,26,.32), rgba(36,198,220,.55)) border-box;
+      border: 1px solid transparent;
+      box-shadow: 0 24px 80px rgba(69,31,82,.13);
+    }
+    .radar-card::before {
+      content:"";
+      position:absolute;
+      width:190px;height:190px;
+      right:-90px;top:-90px;
+      border-radius:50%;
+      border:1px solid rgba(255,122,26,.24);
+      box-shadow:0 0 0 24px rgba(255,79,163,.035),0 0 0 48px rgba(36,198,220,.025);
+      pointer-events:none;
+    }
+
+    .editorial-card {
+      position: relative;
+      border-radius: 1.9rem;
+      overflow: visible;
+    }
+    .editorial-card::before {
+      content:"";
+      position:absolute;
+      z-index:-1;
+      inset: 9px -7px -9px 9px;
+      border-radius: inherit;
+      background: var(--accent-card, #ff4fa3);
+      opacity:.8;
+      transition: transform .35s cubic-bezier(.16,1,.3,1);
+    }
+    .editorial-card:nth-child(4n+2) { --accent-card:#24c6dc; }
+    .editorial-card:nth-child(4n+3) { --accent-card:#ff7a1a; }
+    .editorial-card:nth-child(4n+4) { --accent-card:#8b5cf6; }
+    @media (hover:hover) { .editorial-card:hover::before { transform: translate(5px,6px) rotate(.7deg); } }
+
+    .editorial-card > .glass-card-inner {
+      height:100%;
+      border-radius:inherit;
+      overflow:hidden;
+      background: var(--surface);
+      border:1px solid var(--line);
+      backdrop-filter: blur(24px) saturate(165%);
+      -webkit-backdrop-filter: blur(24px) saturate(165%);
+      box-shadow: var(--shadow);
+    }
+
+    .section-kicker { font-family:'Outfit',sans-serif; font-weight:800; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; }
+
+    .newsletter-max {
+      border-radius: 2.8rem;
+      background:
+        radial-gradient(circle at 7% 8%, rgba(255,79,163,.23), transparent 30%),
+        radial-gradient(circle at 88% 90%, rgba(36,198,220,.18), transparent 34%),
+        var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: 0 28px 100px rgba(91,35,88,.15);
+    }
+    .newsletter-max::before {
+      content:"MARTE ALMA ✦ MARTE ALMA ✦ MARTE ALMA ✦";
+      position:absolute;
+      right:-70px;
+      top:32px;
+      transform:rotate(11deg);
+      font-family:'Outfit',sans-serif;
+      font-size:clamp(.62rem,1vw,.78rem);
+      letter-spacing:.14em;
+      opacity:.08;
+      white-space:nowrap;
+    }
+
+    .score-panel {
+      background: linear-gradient(135deg, #fff8ea, #fffdf8);
+      color: #201e1d;
+      border: 1px solid rgba(32,30,29,.14);
+      box-shadow: 0 18px 42px rgba(71,44,22,.15);
+    }
+    .dark .score-panel { background: linear-gradient(135deg, #f5e1b8, #fff5df); color: #221d17; }
+    .score-square {
+      color: #fffdf7;
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .score-good { background: #25844e; }
+    .score-mid { background: #bf8100; }
+    .score-low { background: #bd3441; }
+    .score-filter[aria-pressed="true"] { background: #201e1d; color: #fff8eb; border-color: #201e1d; }
+    .dark .score-filter[aria-pressed="true"] { background: #fff8eb; color: #201e1d; border-color: #fff8eb; }
+    .rating-card { background: var(--surface-strong); border:1px solid var(--line); box-shadow: var(--shadow); }
+    .review-shelf { scrollbar-width: thin; scrollbar-color: rgba(255,122,26,.55) transparent; }
+    .poster-frame { background:#2a2724; box-shadow:0 8px 22px rgba(0,0,0,.18); }
+
+    @media (max-width: 767px) {
+      .cosmos-orb { filter: blur(70px); opacity: .34; }
+      .cosmos-orb.one { width: 95vw; height: 95vw; left:-55vw; }
+      .cosmos-orb.two { width: 90vw; height: 90vw; right:-56vw; }
+      .cosmos-orb.three { width: 85vw; height: 85vw; left:10vw; }
+      .hero-shell { padding-bottom: 9px; }
+      .hero-backplate { inset: 9px -5px 0 8px; border-radius: 2.15rem; }
+      .hero-sigil { width:58px;height:58px;right:14px;top:14px; }
+      .hero-sigil::after { font-size:1.2rem; }
+      .hero-index { left:14px;top:14px;font-size:.5rem;padding:.55rem .65rem; }
+      .radar-card { border-radius:1.8rem; }
+      .editorial-card::before { inset:7px -4px -7px 7px; }
+      .newsletter-max { border-radius:2rem; }
+      .score-panel { border-radius: 1.5rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="./editorial.css">
+</head>
+<body class="font-sans antialiased selection:bg-brand-pink selection:text-white">
+  <div class="noise"></div>
+  <div class="cosmos-orb one"></div>
+  <div class="cosmos-orb two"></div>
+  <div class="cosmos-orb three"></div>
+  <div id="reading-progress" class="fixed top-0 left-0 z-[80] h-[3px] w-0 bg-gradient-to-r from-brand-pink via-brand-orange to-brand-violet"></div>
+
+  <!-- HEADER -->
+  <header class="fixed top-0 inset-x-0 z-50 px-3 pt-3 md:px-6 md:pt-4">
+    <div class="glass-strong mx-auto max-w-[1500px] h-[66px] md:h-[74px] rounded-[1.4rem] md:rounded-[1.7rem] px-3 md:px-5 flex items-center justify-between">
+      <div class="flex items-center gap-2 md:gap-3 min-w-0">
+        <button id="menu-button" class="w-11 h-11 shrink-0 rounded-full grid place-items-center hover:bg-black/5 dark:hover:bg-white/[.08] transition" aria-label="Abrir menu">
+          <i class="ph-bold ph-list text-[1.35rem]"></i>
+        </button>
+        <button data-go-home class="flex items-center gap-2.5 min-w-0 text-left">
+          <svg viewBox="0 0 100 100" class="logo-eye w-9 h-9 md:w-11 md:h-11 shrink-0 overflow-visible">
+            <g class="logo-blink">
+              <path d="M5 50 C25 20 75 20 95 50 C75 80 25 80 5 50Z" fill="rgba(255,122,26,.10)" stroke="#ff7a1a" stroke-width="4" stroke-linecap="round" />
+              <circle cx="50" cy="50" r="14" fill="#ff7a1a"/>
+              <g class="logo-orbit"><ellipse cx="50" cy="50" rx="28" ry="8" fill="none" stroke="#ff7a1a" stroke-width="2" stroke-dasharray="10 5" transform="rotate(-25 50 50)" /></g>
+            </g>
+          </svg>
+          <div class="min-w-0">
+            <div class="font-brand font-black uppercase tracking-[.08em] text-[1rem] sm:text-[1.12rem] md:text-[1.25rem] whitespace-nowrap">MARTE<span class="text-brand-orange">ALMA</span></div>
+            <div class="hidden sm:block text-[.64rem] uppercase tracking-[.24em] opacity-45 font-bold mt-.5">cultura em outra órbita</div>
+          </div>
+        </button>
+      </div>
+
+      <nav class="desktop-nav hidden lg:flex items-center gap-1 rounded-full p-1 bg-black/[.035] dark:bg-white/[.04] border border-black/[.05] dark:border-white/[.07]">
+        <button data-go-home class="nav-chip px-4 py-2 rounded-full text-sm font-bold hover:bg-black/[.05] dark:hover:bg-white/10 transition">Início</button>
+        <button data-category="Críticas" class="nav-chip px-4 py-2 rounded-full text-sm font-bold hover:bg-black/[.05] dark:hover:bg-white/10 transition">Críticas</button>
+        <button data-reviews class="nav-chip px-4 py-2 rounded-full text-sm font-bold hover:bg-black/[.05] dark:hover:bg-white/10 transition">Catálogo e notas</button>
+        <button data-news class="nav-chip px-4 py-2 rounded-full text-sm font-bold hover:bg-black/[.05] dark:hover:bg-white/10 transition">Notícias</button>
+      </nav>
+
+      <div class="flex items-center gap-1.5 md:gap-2">
+        <button id="search-button" class="w-10 h-10 md:w-11 md:h-11 rounded-full grid place-items-center hover:bg-black/5 dark:hover:bg-white/[.08] transition" aria-label="Buscar">
+          <i class="ph-bold ph-magnifying-glass text-xl"></i>
+        </button>
+        <button id="theme-button" class="w-10 h-10 md:w-11 md:h-11 rounded-full grid place-items-center hover:bg-black/5 dark:hover:bg-white/[.08] transition" aria-label="Alternar tema">
+          <i class="ph-fill ph-moon text-xl"></i>
+        </button>
+        <a href="admin.html" class="hidden sm:inline-flex h-10 md:h-11 items-center px-3 rounded-full bg-brand-ink text-white dark:bg-white dark:text-brand-ink text-sm font-bold">Entrar</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU LATERAL -->
+  <div id="menu-overlay" class="fixed inset-0 z-[60] bg-black/45 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity"></div>
+  <aside id="sidebar" class="fixed top-0 left-0 bottom-0 z-[70] w-[88vw] max-w-[390px] glass-strong rounded-r-[2rem] -translate-x-[105%] transition-transform duration-300 p-5 md:p-7 flex flex-col mobile-safe">
+    <div class="flex items-center justify-between mb-9">
+      <button data-go-home class="font-brand font-black text-xl tracking-[.08em] uppercase">MARTE<span class="text-brand-orange">ALMA</span></button>
+      <button id="menu-close" class="w-11 h-11 rounded-full bg-black/5 dark:bg-white/[.08] grid place-items-center"><i class="ph-bold ph-x text-xl"></i></button>
+    </div>
+    <p class="text-[.68rem] uppercase tracking-[.24em] font-bold opacity-40 mb-3">Explorar</p>
+    <nav class="space-y-2">
+      <button data-go-home class="sidebar-category w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition text-left font-bold"><span class="w-10 h-10 rounded-full bg-brand-pink/12 text-brand-pink grid place-items-center"><i class="ph-fill ph-house text-xl"></i></span> Início</button>
+      <button data-category="Críticas" class="sidebar-category w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition text-left font-bold"><span class="w-10 h-10 rounded-full bg-brand-violet/12 text-brand-violet grid place-items-center"><i class="ph-fill ph-star-half text-xl"></i></span> Críticas</button>
+      <button data-reviews class="sidebar-category w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition text-left font-bold"><span class="w-10 h-10 rounded-full bg-brand-orange/12 text-brand-orange grid place-items-center"><i class="ph-fill ph-squares-four text-xl"></i></span> Catálogo e notas</button>
+      <button data-news class="sidebar-category w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition text-left font-bold"><span class="w-10 h-10 rounded-full bg-brand-cyan/12 text-brand-cyan grid place-items-center"><i class="ph-fill ph-newspaper text-xl"></i></span> Notícias</button>
+    </nav>
+    <div class="mt-auto pt-7 border-t border-black/10 dark:border-white/10">
+      <a href="admin.html" class="mb-4 w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition text-left font-bold">
+        <span class="w-10 h-10 rounded-full bg-brand-violet/12 text-brand-violet grid place-items-center"><i class="ph-fill ph-pencil-simple text-xl"></i></span>
+        <span>Área da redação</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- BUSCA -->
+  <div id="search-overlay" class="fixed inset-0 z-[75] bg-[#07070b]/70 backdrop-blur-xl opacity-0 pointer-events-none transition-opacity p-3 md:p-6 flex justify-center items-start pt-24 md:pt-28">
+    <div id="search-modal" class="glass-strong w-full max-w-3xl rounded-[1.7rem] overflow-hidden translate-y-[-14px] transition-transform">
+      <div class="p-4 md:p-5 flex items-center gap-3 border-b border-black/10 dark:border-white/10">
+        <i class="ph-bold ph-magnifying-glass text-2xl text-brand-pink"></i>
+        <input id="search-input" class="min-w-0 flex-1 bg-transparent outline-none text-lg md:text-2xl font-display font-bold" placeholder="Busque artistas, filmes, séries..." />
+        <button id="search-close" class="w-10 h-10 rounded-full bg-black/5 dark:bg-white/[.08] grid place-items-center"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div id="search-results" class="p-3 md:p-4 max-h-[68vh] overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <main class="pt-[94px] md:pt-[112px] pb-16">
+    <div class="max-w-[1500px] mx-auto px-4 md:px-7 lg:px-10">
+      <!-- CATEGORY STRIP / MOBILE -->
+      <div class="category-strip flex lg:hidden overflow-x-auto gap-2 pb-3 -mx-4 px-4 mb-2">
+        <button data-go-home class="shrink-0 px-4 py-2 rounded-full glass text-sm font-bold">Início</button>
+        <button data-category="Críticas" class="shrink-0 px-4 py-2 rounded-full glass text-sm font-bold">Críticas</button>
+        <button data-reviews class="shrink-0 px-4 py-2 rounded-full glass text-sm font-bold">Catálogo e notas</button>
+        <button data-news class="shrink-0 px-4 py-2 rounded-full glass text-sm font-bold">Notícias</button>
+      </div>
+
+      <div id="dynamic-content">
+        <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-5 md:gap-7">
+          <div class="skeleton h-[520px] rounded-[2rem]"></div>
+          <div class="hidden xl:block skeleton h-[520px] rounded-[2rem]"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-black/10 dark:border-white/10 py-10 md:py-14">
+    <div class="max-w-[1500px] mx-auto px-4 md:px-7 lg:px-10 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <div class="font-brand font-black text-2xl tracking-[.08em] uppercase mb-3">MARTE<span class="text-brand-orange">ALMA</span></div>
+        <p class="max-w-xl text-sm md:text-base opacity-55 leading-relaxed">Cultura pop, cinema, séries, música e crítica com identidade, contexto e uma pitada de outro planeta.</p>
+      </div>
+      <div class="text-sm opacity-55 md:text-right">
+        <div class="flex gap-5 md:justify-end mb-3 font-semibold"><a href="?pagina=sobre">Sobre</a><a href="?pagina=expediente">Expediente</a><a href="?pagina=privacidade">Privacidade</a></div>
+        <div>© 2026 Marte Alma. Todos os direitos reservados.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { firebaseConfig, MARTE_ALMA } from './firebase-config.js';
+    import { FALLBACK_POSTS } from './articles.js';
+    import { buildCatalog, workOf, criticIdFor, kindLabels } from './review-model.js';
+    import { createViews } from './public-views.js';
+    import { enableAds } from './adsense.js';
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js';
+    import { getFirestore, collection, onSnapshot, query, where, limit, orderBy, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js';
+
+    // ==========================================================
+    // POSTS DE DEMONSTRAÇÃO / FALLBACK
+    // O site continua funcionando mesmo antes de você configurar Firebase.
+    // ==========================================================
+    // Conteúdo inicial compartilhado com o editor da redação.
+    // As versões salvas no banco têm prioridade.
+    let POSTS = [];
+    let auth, db, currentUser = null, stopComments = null;
+    const content = document.getElementById('dynamic-content');
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+    const escapeHtml = (value='') => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+    const slugify = (value='') => value.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+    function normalizePost(post, index=0) {
+      const work = workOf(post);
+      const rawDate = post.publishedAt?.toDate ? post.publishedAt.toDate() : (post.publishedAt instanceof Date ? post.publishedAt : new Date(post.publishedAt || post.timestamp || Date.now()));
+      return {
+        ...post,
+        id: String(post.id ?? index),
+        title: post.title || 'Sem título',
+        slug: post.slug || slugify(post.title || `materia-${index}`),
+        excerpt: post.excerpt || stripMarkdown(post.content || '').slice(0, 170),
+        category: post.category || 'Pop',
+        author: post.author || 'Redação Marte',
+        image: work.image || post.image || '',
+        poster: work.image || post.image || '',
+        workId: work.id, workKind: work.workKind, workTitle: work.workTitle, artist: work.artist, releaseYear: work.releaseYear,
+        spotifyEmbed: work.spotifyId ? `https://open.spotify.com/embed/album/${work.spotifyId}` : '',
+        featured: Boolean(post.featured),
+        status: post.status || 'published',
+        publishedAt: isNaN(rawDate) ? new Date() : rawDate,
+        content: post.content || ''
+      };
+    }
+
+    function stripMarkdown(text='') {
+      return text.replace(/[#_*`>\[\]()!-]/g, ' ').replace(/\s+/g,' ').trim();
+    }
+
+    function dateLabel(date) {
+      return new Intl.DateTimeFormat('pt-BR', { day:'2-digit', month:'short', year:'numeric' }).format(date).replace('.', '');
+    }
+
+    function readingTime(text='') {
+      const words = stripMarkdown(text).split(/\s+/).filter(Boolean).length;
+      return Math.max(1, Math.ceil(words / 210));
+    }
+
+    function categoryClass(category='') {
+      const c = category.toLowerCase();
+      if (c === 'pop') return 'text-brand-pink bg-brand-pink/10 border-brand-pink/20';
+      if (c === 'cinema') return 'text-brand-cyan bg-brand-cyan/10 border-brand-cyan/20';
+      if (c === 'séries' || c === 'series') return 'text-brand-orange bg-brand-orange/10 border-brand-orange/20';
+      return 'text-brand-violet bg-brand-violet/10 border-brand-violet/20';
+    }
+
+    function pill(category) {
+      return `<span class="inline-flex items-center px-3 py-1.5 rounded-full border text-[.66rem] font-extrabold uppercase tracking-[.15em] ${categoryClass(category)}">${escapeHtml(category)}</span>`;
+    }
+
+    function articleButton(post, extra='') {
+      return `data-open-article="${escapeHtml(post.slug)}" ${extra}`;
+    }
+
+    function scoreVerdict(score) {
+      if (score >= 90) return 'essencial';
+      if (score >= 80) return 'muito bom';
+      if (score >= 70) return 'bom';
+      if (score >= 60) return 'irregular';
+      return 'fraco';
+    }
+
+    function scoreTone(score) {
+      if (score >= 70) return 'score-good';
+      if (score < 50) return 'score-low';
+      return 'score-mid';
+    }
+
+    function reviewType(post) {
+      if (post.reviewType) return post.reviewType;
+      if (post.category === 'Cinema') return 'Filmes';
+      if (post.category === 'Séries') return 'Séries';
+      return 'Música';
+    }
+
+    function renderReviewCard(post) {
+      return `<article ${articleButton(post)} class="rating-card cursor-pointer w-[164px] md:w-[190px] shrink-0 rounded-2xl p-2.5 hover:-translate-y-1 transition-transform">
+        <div class="relative"><img src="${escapeHtml(post.poster || post.image)}" alt="Pôster de ${escapeHtml(post.title)}" class="poster-frame w-full aspect-[2/3] rounded-xl object-cover" loading="lazy"><div class="score-square ${scoreTone(post.reviewScore)} review-score absolute right-2 top-2 w-11 h-11 rounded-xl grid place-items-center text-xl font-black leading-none">${post.reviewScore}</div>${post.trailerId ? '<span class="absolute left-2 bottom-2 w-8 h-8 rounded-full bg-black/70 text-white grid place-items-center"><i class="ph-fill ph-play"></i></span>' : ''}</div>
+        <div class="px-1 pt-3"><div class="section-kicker opacity-55 mb-1">${escapeHtml(reviewType(post))}</div><h3 class="font-display font-extrabold text-[.98rem] leading-[1.08] tracking-[-.02em] line-clamp-3">${escapeHtml(post.title)}</h3>${post.revisiting ? '<span class="inline-flex mt-2 px-2 py-1 rounded-md bg-brand-violet/12 text-brand-violet text-[.58rem] font-extrabold uppercase tracking-[.09em]">Revisitando</span>' : ''}<div class="mt-2 text-[.68rem] font-bold opacity-50">${dateLabel(post.publishedAt)}</div></div>
+      </article>`;
+    }
+
+    function renderReviews(active='Todos', push=true) { views.catalog(active, push); }
+
+    function renderHome() { views.home(false); }
+
+    function renderCategory(category, push=true) { views.feed(category, push); }
+
+    function renderNews() {
+      renderCategory('Notícias');
+    }
+
+    function renderArticle(slug, push=true) { views.article(slug, push); }
+
+    function updateMeta(post) {
+      const description = post.excerpt || stripMarkdown(post.content).slice(0,160);
+      $('meta[name="description"]').setAttribute('content', description);
+      let json = $('#news-jsonld');
+      if (!json) { json = document.createElement('script'); json.type='application/ld+json'; json.id='news-jsonld'; document.head.appendChild(json); }
+      json.textContent = JSON.stringify({ '@context':'https://schema.org', '@type':'NewsArticle', headline:post.title, description, image:[post.image], datePublished:post.publishedAt.toISOString(), author:[{'@type':'Person','name':post.author}], publisher:{'@type':'Organization','name':MARTE_ALMA.siteName} });
+      document.querySelector('link[rel="canonical"]').href = `${MARTE_ALMA.siteUrl}?artigo=${encodeURIComponent(post.slug)}`;
+      document.querySelector('meta[property="og:type"]').content = 'article';
+    }
+
+    function renderEmpty() { content.innerHTML = `<div class="py-28 text-center"><i class="ph-fill ph-planet text-6xl text-brand-orange"></i><h1 class="font-display font-black text-3xl mt-4">Nenhuma matéria publicada ainda.</h1></div>`; }
+
+    function bindDynamicEvents() {
+      $$('[data-open-article]', content).forEach(el => el.addEventListener('click', () => renderArticle(el.dataset.openArticle)));
+      $$('[data-go-home]', content).forEach(el => el.addEventListener('click', () => { history.pushState({},'',location.pathname); renderHome(); closeMenu(); }));
+      $$('[data-reviews]', content).forEach(el => el.addEventListener('click', () => renderReviews()));
+    }
+
+    function bindShare(post) {
+      $$('[data-share]').forEach(btn => btn.addEventListener('click', async () => {
+        const url = location.href;
+        if (btn.dataset.share === 'whatsapp') window.open(`https://wa.me/?text=${encodeURIComponent(post.title + ' ' + url)}`,'_blank','noopener');
+        if (btn.dataset.share === 'x') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(url)}`,'_blank','noopener');
+        if (btn.dataset.share === 'copy') { await navigator.clipboard.writeText(url); btn.innerHTML = '<i class="ph-bold ph-check"></i>'; setTimeout(()=>btn.innerHTML='<i class="ph-bold ph-link"></i>',1400); }
+      }));
+    }
+
+    function initComments(post) {
+      if (stopComments) stopComments();
+      const list = $('#comments-list');
+      const login = $('#comment-login');
+      const form = $('#comment-form-wrap');
+      if (!db || !auth) { list.textContent = 'Os comentários estarão disponíveis quando a conexão com o site terminar de carregar.'; return; }
+      const renderState = () => { login.classList.toggle('hidden', !!currentUser); form.classList.toggle('hidden', !currentUser); if (currentUser) $('#comment-user').textContent = `Comentando como ${currentUser.displayName || currentUser.email}`; };
+      renderState();
+      login.onclick = async () => { try { const result = await signInWithPopup(auth, new GoogleAuthProvider()); currentUser = result.user; renderState(); } catch (err) { alert(err.code === 'auth/popup-blocked' ? 'Permita a janela de login do Google e tente novamente.' : `Não foi possível entrar: ${err.code || err.message}`); } };
+      $('#comment-send').onclick = async () => { const text = $('#comment-text').value.trim(); if (!text || !currentUser) return; try { await addDoc(collection(db, 'articles', post.id, 'comments'), { text, userId: currentUser.uid, name: currentUser.displayName || 'Leitor(a)', photoURL: currentUser.photoURL || '', createdAt: serverTimestamp() }); $('#comment-text').value = ''; } catch (err) { alert('Não foi possível publicar o comentário.'); } };
+      stopComments = onSnapshot(query(collection(db, 'articles', post.id, 'comments'), orderBy('createdAt', 'desc'), limit(50)), snap => { const comments = snap.docs.map(d => d.data()); list.innerHTML = comments.length ? comments.map(c => `<article class="rounded-2xl bg-black/[.035] dark:bg-white/[.06] p-4"><div class="font-bold text-sm">${escapeHtml(c.name || 'Leitor(a)')}</div><p class="mt-2 leading-relaxed">${escapeHtml(c.text || '')}</p></article>`).join('') : '<p class="opacity-60">Ainda não tem comentários. Começa a conversa.</p>'; }, () => { list.textContent = 'Os comentários serão liberados assim que as regras de publicação forem ativadas.'; });
+    }
+
+    // Busca
+    const searchOverlay = $('#search-overlay');
+    function openSearch(){ searchOverlay.classList.remove('opacity-0','pointer-events-none'); $('#search-modal').classList.remove('translate-y-[-14px]'); document.body.style.overflow='hidden'; setTimeout(()=>$('#search-input').focus(),80); renderSearch(''); }
+    function closeSearch(){ searchOverlay.classList.add('opacity-0','pointer-events-none'); $('#search-modal').classList.add('translate-y-[-14px]'); document.body.style.overflow=''; }
+    $('#search-button').addEventListener('click', openSearch); $('#search-close').addEventListener('click', closeSearch);
+    searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) closeSearch(); });
+    $('#search-input').addEventListener('input', e => renderSearch(e.target.value));
+    function renderSearch(term='') {
+      const q = term.trim().toLowerCase();
+      const results = q.length < 2 ? POSTS.slice(0,5) : POSTS.filter(p => [p.title,p.excerpt,p.category,p.author].join(' ').toLowerCase().includes(q)).slice(0,8);
+      $('#search-results').innerHTML = `${q.length<2 ? '<p class="px-2 py-3 text-xs uppercase tracking-[.18em] font-extrabold opacity-35">Sugestões</p>' : ''}${results.map(p => `<button data-search-slug="${escapeHtml(p.slug)}" class="w-full p-2.5 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[.07] transition flex gap-3 text-left"><img src="${escapeHtml(p.image)}" class="w-20 h-16 object-cover rounded-xl"><div class="min-w-0"><div class="text-[.62rem] uppercase tracking-[.14em] font-extrabold ${categoryClass(p.category).split(' ')[0]}">${escapeHtml(p.category)}</div><div class="font-display font-bold leading-tight mt-1 line-clamp-2">${escapeHtml(p.title)}</div></div></button>`).join('') || '<div class="p-10 text-center opacity-45">Nenhum resultado encontrado.</div>'}`;
+      $$('[data-search-slug]').forEach(b => b.addEventListener('click',()=>{ closeSearch(); renderArticle(b.dataset.searchSlug); }));
+    }
+
+    // Menu
+    const sidebar = $('#sidebar'), menuOverlay = $('#menu-overlay');
+    function openMenu(){ sidebar.classList.remove('-translate-x-[105%]'); menuOverlay.classList.remove('opacity-0','pointer-events-none'); document.body.style.overflow='hidden'; }
+    function closeMenu(){ sidebar.classList.add('-translate-x-[105%]'); menuOverlay.classList.add('opacity-0','pointer-events-none'); document.body.style.overflow=''; }
+    $('#menu-button').addEventListener('click',openMenu); $('#menu-close').addEventListener('click',closeMenu); menuOverlay.addEventListener('click',closeMenu);
+
+    // Categorias globais
+    $$('[data-category]').forEach(btn => btn.addEventListener('click',()=>renderCategory(btn.dataset.category)));
+    $$('[data-go-home]').forEach(btn => btn.addEventListener('click',()=>views.home()));
+    $$('[data-reviews]').forEach(btn => btn.addEventListener('click',()=>renderReviews()));
+    $$('[data-news]').forEach(btn => btn.addEventListener('click',renderNews));
+
+    // Tema
+    const themeButton = $('#theme-button');
+    function applyTheme(mode){ document.documentElement.classList.toggle('dark', mode==='dark'); localStorage.setItem('marteAlmaTheme',mode); themeButton.innerHTML = mode==='dark' ? '<i class="ph-fill ph-sun text-xl text-brand-orange"></i>' : '<i class="ph-fill ph-moon text-xl"></i>'; }
+    applyTheme(localStorage.getItem('marteAlmaTheme') || 'light');
+    themeButton.addEventListener('click',()=>applyTheme(document.documentElement.classList.contains('dark')?'light':'dark'));
+
+    // Reveals
+    const observer = new IntersectionObserver(entries => entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('is-visible'); observer.unobserve(e.target); }}),{threshold:.08,rootMargin:'0px 0px -30px'});
+    function observeReveals(){ $$('.reveal:not(.is-visible)').forEach(el=>observer.observe(el)); }
+
+    // Barra de progresso
+    addEventListener('scroll',()=>{ const max=document.documentElement.scrollHeight-innerHeight; $('#reading-progress').style.width=(max>0?(scrollY/max)*100:0)+'%'; },{passive:true});
+
+    // Navegação voltar/avançar
+    addEventListener('popstate',routeFromUrl);
+    const views = createViews({ getPosts:()=>POSTS, root:content, initComments, updateMeta, bindShare, cleanup:()=>{ if(stopComments){stopComments();stopComments=null;} } });
+    function routeFromUrl(){ const params=new URLSearchParams(location.search); const slug=params.get('artigo'); if(slug) renderArticle(slug,false); else if(params.get('obra')) views.work(params.get('obra'),false); else if(params.get('critico')) views.critic(params.get('critico'),false); else if(params.get('pagina')) views.page(params.get('pagina'),false); else if(params.get('notas')) renderReviews('Todos', false); else if(params.get('categoria')) renderCategory(params.get('categoria'),false); else renderHome(); }
+
+    // Firebase: se não estiver configurado, usa fallback automaticamente.
+    async function boot() {
+      POSTS = FALLBACK_POSTS.map(normalizePost).sort((a,b)=>b.publishedAt-a.publishedAt);
+      routeFromUrl();
+      enableAds();
+      const configured = firebaseConfig.apiKey && firebaseConfig.apiKey !== 'COLE_AQUI' && firebaseConfig.projectId && !firebaseConfig.projectId.startsWith('SEU-');
+      if (!configured) { POSTS = FALLBACK_POSTS.map(normalizePost).sort((a,b)=>b.publishedAt-a.publishedAt); return routeFromUrl(); }
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app); auth = getAuth(app);
+        onAuthStateChanged(auth, user => { currentUser = user; const login = $('#comment-login'), form = $('#comment-form-wrap'); if(login && form){ login.classList.toggle('hidden',!!user); form.classList.toggle('hidden',!user); if(user) $('#comment-user').textContent=`Comentando como ${user.displayName || user.email}`; } document.querySelectorAll('a[href="admin.html"]').forEach(link => { if(user && user.email === MARTE_ALMA.adminEmail) link.textContent='Redação'; }); });
+        const q = query(collection(db,'articles'), where('status','==','published'));
+        onSnapshot(q, snapshot => {
+          const live = snapshot.docs.map((d,i)=>normalizePost({id:d.id,...d.data()},i)).sort((a,b)=>b.publishedAt-a.publishedAt);
+          POSTS = live;
+          routeFromUrl();
+        }, err => { console.warn('Firestore indisponível, usando fallback:',err); POSTS=FALLBACK_POSTS.map(normalizePost); routeFromUrl(); });
+      } catch (err) { console.warn('Firebase não configurado corretamente:',err); POSTS=FALLBACK_POSTS.map(normalizePost); routeFromUrl(); }
+    }
+    boot();
+  </script>
+</body>
+</html>
